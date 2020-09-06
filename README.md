@@ -1,7 +1,7 @@
 # logger
-The lite C++ logger
-10...50 microseconds to write a line
-Write to std::cout and/or file
+The lite C++ logger  
+10...50 microseconds to write a line  
+Write to std::cout and/or file  
 Configurable: safe, safe queue, unsafe
 
 ## Usage
