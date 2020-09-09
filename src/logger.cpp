@@ -122,4 +122,4 @@ void logger::write(log_level level, std::string time, std::string sender, std::s
 #endif
 }
 
-}
+} // !namespace logger

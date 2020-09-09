@@ -111,6 +111,6 @@ public:
 
 };
 
-}
+} // !namespace logger
 
 #endif // !LOGGER
