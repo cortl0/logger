@@ -40,4 +40,4 @@ uninstall:
 	cd $(PREFIX_LIB); rm $(TARGET).so;
 
 $(TARGET)_example.out: logger.cpp main.cpp
-	g++ -std=c++17 -pthread -o $(TARGET)_example.out main.cpp /usr/local/lib/$(TARGET).so
+	g++ -std=c++17 -pthread -o $(TARGET)_example.out logger.cpp main.cpp
