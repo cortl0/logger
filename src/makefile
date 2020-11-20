@@ -19,7 +19,7 @@ endif
 PREFIX_INC=$(PREFIX)/include
 PREFIX_LIB=$(PREFIX)/lib
 
-.PHONY: all clean install uninstall
+.PHONY: all clean install uninstall $(TARGET)_example.out
 
 all: $(TARGET).so
 

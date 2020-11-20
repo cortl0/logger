@@ -36,6 +36,10 @@ int main()
 ## Build
 make  
 make clean  
+make install  
+make uninstall  
+make logger_example.out
+
 QT build
 
 ## Author
