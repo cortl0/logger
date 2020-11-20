@@ -49,4 +49,4 @@ https://github.com/cortl0/logger
 ## License
 This project is licensed under the GPL v3.0 - see the LICENSE file for details
 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DPXPWAL9BQD8Q)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cortl@yandex.ru&item_name=for+the+development+logger+and+my+other+projects&amount=5%2e00&currency_code=USD)
