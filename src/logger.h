@@ -20,6 +20,8 @@
 
 #include "unistd.h"
 
+#define sndr (std::string() + "file " + __FILE__ + " | line " + std::to_string(__LINE__) + " | func " + __FUNCTION__)
+
 namespace logger
 {
 

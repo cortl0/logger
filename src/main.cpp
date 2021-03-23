@@ -12,13 +12,13 @@ int main()
 {
     logger::logger l(logger::log_level_debug);
 
-    l.logging(logger::log_level_trace,       "main()", "message_0");
-    l.logging(logger::log_level_debug,       "main()", "message_1");
-    l.logging(logger::log_level_information, "main()", "message_2");
-    l.logging(logger::log_level_warning,     "main()", "message_3");
-    l.logging(logger::log_level_error,       "main()", "message_4");
-    l.logging(logger::log_level_critical,    "main()", "message_5");
-    l.logging(logger::log_level_none,        "main()", "message_6");
+    l.logging(logger::log_level_trace,       sndr,     "message_0");
+    l.logging(logger::log_level_debug,       sndr,     "message_1");
+    l.logging(logger::log_level_information, sndr,     "message_2");
+    l.logging(logger::log_level_warning,     "sender", "message_3");
+    l.logging(logger::log_level_error,       sndr,     "message_4");
+    l.logging(logger::log_level_critical,    sndr,     "message_5");
+    l.logging(logger::log_level_none,        sndr,     "message_6");
 
     return 0;
 }

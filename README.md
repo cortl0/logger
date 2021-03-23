@@ -12,13 +12,13 @@ int main()
 {
 	logger::logger l(logger::log_level_debug);
 	
-	l.logging(logger::log_level_trace,       "main()", "message_0");
-	l.logging(logger::log_level_debug,       "main()", "message_1");
-	l.logging(logger::log_level_information, "main()", "message_2");
-	l.logging(logger::log_level_warning,     "main()", "message_3");
-	l.logging(logger::log_level_error,       "main()", "message_4");
-	l.logging(logger::log_level_critical,    "main()", "message_5");
-	l.logging(logger::log_level_none,        "main()", "message_6");
+	l.logging(logger::log_level_trace,       sndr,     "message_0");
+	l.logging(logger::log_level_debug,       sndr,     "message_1");
+	l.logging(logger::log_level_information, sndr,     "message_2");
+	l.logging(logger::log_level_warning,     "sender", "message_3");
+	l.logging(logger::log_level_error,       sndr,     "message_4");
+	l.logging(logger::log_level_critical,    sndr,     "message_5");
+	l.logging(logger::log_level_none,        sndr,     "message_6");
 	
 	return 0;
 }
@@ -26,11 +26,12 @@ int main()
 
 ## Output
 ```
-2020.09.06 08:28:41.594492 | debug | main() | message_1
-2020.09.06 08:28:41.594623 | information | main() | message_2
-2020.09.06 08:28:41.594646 | warning | main() | message_3
-2020.09.06 08:28:41.594665 | error | main() | message_4
-2020.09.06 08:28:41.594683 | critical | main() | message_5
+2021.03.23 23:04:29.251019 | debug | file ../src/main.cpp | line 16 | func main | message_1
+2021.03.23 23:04:29.251169 | information | file ../src/main.cpp | line 17 | func main | message_2
+2021.03.23 23:04:29.251198 | warning | sender | message_3
+2021.03.23 23:04:29.251226 | error | file ../src/main.cpp | line 19 | func main | message_4
+2021.03.23 23:04:29.251252 | critical | file ../src/main.cpp | line 20 | func main | message_5
+
 ```
 
 ## Build
@@ -52,5 +53,3 @@ https://github.com/cortl0/logger
 
 ## License
 This project is licensed under the GPL v3.0 - see the LICENSE file for details
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=cortl@yandex.ru&item_name=for+the+development+logger+and+my+other+projects&amount=5%2e00&currency_code=USD)
