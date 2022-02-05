@@ -8,16 +8,17 @@
 
 #include "logger.h"
 
+#include <ctime>
+
 namespace logger
 {
 
 logger::~logger()
 {
 #ifdef LOGGER_SAFE_QUEUE
-    while(q.size() != 0)
-        usleep(1000);
-
     stop = true;
+
+    while(stop);
 #endif
 
 #ifdef LOGGER_LOGGING_TO_FILE
@@ -25,11 +26,11 @@ logger::~logger()
 #endif
 }
 
-logger::logger(log_level minimum_log_level
-#ifdef LOGGER_LOGGING_TO_FILE
-        , std::string file_log_path
-#endif
-        ) : minimum_log_level(minimum_log_level)
+logger::logger(enum level minimum_log_level
+               #ifdef LOGGER_LOGGING_TO_FILE
+               , std::string file_log_path
+               #endif
+               ) : level_(minimum_log_level)
 {
 #ifdef LOGGER_LOGGING_TO_FILE
     log_file = std::ofstream(file_log_path, std::ios::out | std::ios_base::binary | std::ios_base::app);
@@ -39,42 +40,58 @@ logger::logger(log_level minimum_log_level
 #endif
 
 #ifdef LOGGER_SAFE_QUEUE
-    thrd = std::thread(thread_work, this);
+    thrd = std::thread(action, this);
 
     thrd.detach();
 #endif
 }
 
-void logger::set_minimum_log_level(log_level minimum_log_level)
+std::string logger::get_date_time() noexcept(true)
 {
-    this->minimum_log_level = minimum_log_level;
-}
+    boost::format fmter("%s.%06d");
 
-void logger::get_time(std::string& time_str) noexcept
-{
 #define LOGGER_TIME_BUFFER_LENGTH 20
-#define LOGGER_TIME_BUFFER_MS_LENGTH 7
-    static char time_buffer[LOGGER_TIME_BUFFER_LENGTH];
-    static char time_buffer_ms[LOGGER_TIME_BUFFER_MS_LENGTH];
-    static std::time_t time;
+    char time_buffer[LOGGER_TIME_BUFFER_LENGTH];
+
     auto tp = std::chrono::high_resolution_clock::now().time_since_epoch();
-    std::chrono::microseconds mics = std::chrono::duration_cast<std::chrono::microseconds>(tp);
-    std::chrono::seconds s = std::chrono::duration_cast<std::chrono::seconds>(tp);
-    mics = mics % 1000000;
-    time = s.count();
+
+    std::time_t time = std::chrono::duration_cast<std::chrono::seconds>(tp).count();
+
+#ifdef LOGGER_USE_GMT
+    std::strftime(time_buffer, LOGGER_TIME_BUFFER_LENGTH, "%Y.%m.%d %H:%M:%S", std::gmtime(&time));
+#else
     std::strftime(time_buffer, LOGGER_TIME_BUFFER_LENGTH, "%Y.%m.%d %H:%M:%S", std::localtime(&time));
-    std::sprintf( time_buffer_ms, "%.6d", static_cast<int>(mics.count()));
-    time_str = time_buffer;
-    time_str += ".";
-    time_str += time_buffer_ms;
+#endif
+
+    fmter % time_buffer;
+
+    std::chrono::microseconds microseconds = std::chrono::duration_cast<std::chrono::microseconds>(tp);
+
+    fmter % (microseconds % 1000000).count();
+
+    return fmter.str();
 }
 
-void logger::logging(log_level level, std::string sender, std::string message)
+std::string logger::get_time() noexcept(true)
 {
-    if (log_level_none == level)
-        return;
+    boost::format fmter("%d.%09d");
 
-    if (minimum_log_level < level)
+    auto tp = std::chrono::high_resolution_clock::now().time_since_epoch();
+
+    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(tp);
+
+    fmter % seconds.count();
+
+    std::chrono::nanoseconds nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(tp);
+
+    fmter % (nanoseconds % 1000000000).count();
+
+    return fmter.str();
+}
+
+void logger::log(level level, std::string message) noexcept(true)
+{
+    if (level_ < level || level::none == level)
         return;
 
 #if defined LOGGER_SAFE_QUEUE || defined LOGGER_SAFE
@@ -82,11 +99,9 @@ void logger::logging(log_level level, std::string sender, std::string message)
 #endif
 
 #if defined LOGGER_SAFE || defined LOGGER_UNSAFE
-    get_time(time_buffer);
-    write(level, time_buffer, sender, message);
+    write(level, message);
 #elif defined LOGGER_SAFE_QUEUE
-    get_time(time_buffer);
-    q.push(item_message(level, time_buffer, sender, message));
+    queue_.push(item_message(level, message));
 #endif
 
 #if defined LOGGER_SAFE_QUEUE || defined LOGGER_SAFE
@@ -94,31 +109,53 @@ void logger::logging(log_level level, std::string sender, std::string message)
 #endif
 }
 
-#ifdef LOGGER_SAFE_QUEUE
-void logger::thread_work(logger* l)
+void logger::set_level(level level)
 {
-    while(!l->stop)
-        if(l->mtx.try_lock())
-        {
-            if(l->q.size())
-            {
-                l->write(l->q.front().level, l->q.front().time, l->q.front().sender, l->q.front().message);
-                l->q.pop();
-            }
+    level_ = level;
+}
 
-            l->mtx.unlock();
+#ifdef LOGGER_SAFE_QUEUE
+void logger::action(logger* l) noexcept(true)
+{
+    std::queue<item_message> local_queue;
+
+    while(!l->stop || l->queue_.size())
+    {
+        {
+            std::unique_lock<std::mutex> lock(l->mtx, std::try_to_lock);
+
+            if(lock.owns_lock())
+                if(l->queue_.size())
+                    std::swap(l->queue_, local_queue);
         }
+
+        while(local_queue.size())
+        {
+            l->write(local_queue.front().level, local_queue.front().message);
+            local_queue.pop();
+        }
+    }
+
+    l->stop = false;
 }
 #endif
 
-void logger::write(log_level level, std::string time, std::string sender, std::string message) noexcept
+void logger::write(level level, const std::string& message) noexcept(true)
 {
 #ifdef LOGGER_LOGGING_TO_COUT
-    std::cout << time << " | " << log_level_names[level] << " | " << sender << " | " << message << std::endl;
+    std::cout << level_names[(size_t)level] << " | " << message << std::endl;
+#endif
+
+#ifdef LOGGER_LOGGING_TO_CERR
+    std::cerr << level_names[(size_t)level] << " | " << message << std::endl;
 #endif
 
 #ifdef LOGGER_LOGGING_TO_FILE
-    log_file << time << " | " << log_level_names[level] << " | " << sender << " | " << message << std::endl;
+    log_file << level_names[(size_t)level] << " | " << message << std::endl;
+#endif
+
+#ifdef LOGGER_LOGGING_TO_SOCKET
+    /* not implemented */
 #endif
 }
 

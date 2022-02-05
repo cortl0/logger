@@ -24,7 +24,7 @@ PREFIX_LIB=$(PREFIX)/lib
 all: $(TARGET).so
 
 $(TARGET).so: $(SRCS)
-	g++ -std=c++17 -pthread -fPIC -shared -o $(TARGET).so $(SRCS)
+	g++ -std=c++17 -pthread -lboost_system -fPIC -shared -o $(TARGET).so $(SRCS)
 
 clean:
 	rm -f $(TARGET).so
@@ -40,4 +40,4 @@ uninstall:
 	cd $(PREFIX_LIB); rm $(TARGET).so;
 
 $(TARGET)_example.out: logger.cpp main.cpp
-	g++ -std=c++17 -pthread -o $(TARGET)_example.out logger.cpp main.cpp
+	g++ -std=c++17 -pthread -lboost_system -o $(TARGET)_example.out logger.cpp main.cpp

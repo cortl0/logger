@@ -1,36 +1,56 @@
 # logger
 The lite C++ logger  
-10...50 microseconds to write a line  
-Write to std::cout and/or file  
+8 microseconds to build and receive a log-message
+Write to std::cout and/or std::cerr and/or file
 Configurable: safe, safe queue, unsafe
 
 ## Usage
 ```
 #include "logger.h"
 
+#define fmt_dtp(message) LOGGER_DATE_TIME_MESSAGE_PLACE_STRING(message)
+#define fmt_tp(message)  LOGGER_TIME_MESSAGE_PLACE_STRING(message)
+
+#define logger_instance l
+
 int main()
 {
-	logger::logger l(logger::log_level_debug);
-	
-	l.logging(logger::log_level_trace,       sndr,     "message_0");
-	l.logging(logger::log_level_debug,       sndr,     "message_1");
-	l.logging(logger::log_level_information, sndr,     "message_2");
-	l.logging(logger::log_level_warning,     "sender", "message_3");
-	l.logging(logger::log_level_error,       sndr,     "message_4");
-	l.logging(logger::log_level_critical,    sndr,     "message_5");
-	l.logging(logger::log_level_none,        sndr,     "message_6");
-	
-	return 0;
+    logger::logger l(logger::logger::level::debug);
+
+    l.log(logger::logger::level::none     , "message_0: custom message will never be output");
+    l.log(logger::logger::level::fatal    , "message_1: custom message will be output in fatal mode and higher");
+    l.log(logger::logger::level::critical , fmt_dtp ("message_2: default critical message with date and time stamp and path"));
+    l.log(logger::logger::level::error    , fmt_tp  ("message_3: default error message with time stamp and path"));
+    log_warning_t ("message_4: friendly default warning message with time stamp");
+    log_info_dtp  ("message_5: friendly default info message with date and time stamp and path");
+    log_verbose   ("message_6: friendly default verbose message with date and time stamp and path");
+    log_debug_dt  ("message_7: friendly default debug message with date and time stamp");
+    log_trace     ("message_8: friendly default trace message will not be output according to the set logging level");
+
+    log_verbose_t ("speed test");
+    log_verbose_t ("speed test");
+    log_verbose_t ("speed test");
+    log_verbose_t ("speed test");
+    log_verbose_t ("speed test");
+
+    return 0;
 }
 ```
 
 ## Output
 ```
-2021.03.23 23:04:29.251019 | debug | file ../src/main.cpp | line 16 | func main | message_1
-2021.03.23 23:04:29.251169 | information | file ../src/main.cpp | line 17 | func main | message_2
-2021.03.23 23:04:29.251198 | warning | sender | message_3
-2021.03.23 23:04:29.251226 | error | file ../src/main.cpp | line 19 | func main | message_4
-2021.03.23 23:04:29.251252 | critical | file ../src/main.cpp | line 20 | func main | message_5
+fatal    | message_1: custom message will be output in fatal mode and higher
+critical | 2022.02.05 18:13:34.172416 | message_2: default critical message with date and time stamp and path | at: main: ../src/main.cpp: 22
+error    | 1644059614.172571235 | message_3: default error message with time stamp and path | at: main: ../src/main.cpp: 23
+warning  | 1644059614.172581292 | message_4: friendly default warning message with time stamp
+info     | 2022.02.05 18:13:34.172590 | message_5: friendly default info message with date and time stamp and path | at: main: ../src/main.cpp: 25
+verbose  | 2022.02.05 18:13:34.172605 | message_6: friendly default verbose message with date and time stamp and path | at: main: ../src/main.cpp: 26
+debug    | 2022.02.05 18:13:34.172618 | message_7: friendly default debug message with date and time stamp
+verbose  | 1644059614.172643032 | speed test
+verbose  | 1644059614.172650854 | speed test
+verbose  | 1644059614.172658397 | speed test
+verbose  | 1644059614.172665940 | speed test
+verbose  | 1644059614.172673483 | speed test
 
 ```
 

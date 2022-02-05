@@ -12,11 +12,13 @@ CONFIG += console c++17
 CONFIG -= app_bundle
 CONFIG -= qt
 
-LIBS += -pthread
+LIBS += \
+    -lpthread \
+    -lboost_system
 
 SOURCES += \
-        main.cpp \
-        logger.cpp
+    main.cpp \
+    logger.cpp
 
 HEADERS += \
     logger.h
