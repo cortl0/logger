@@ -1,8 +1,7 @@
 # logger
 The lite C++ logger  
-8 microseconds to build and receive a log-message
-Write to std::cout and/or std::cerr and/or file
-Configurable: safe, safe queue, unsafe
+6 microseconds to build and receive a log-message
+Write to file by file_descriptor such as cout, cerr and all other file
 
 ## Usage
 ```
