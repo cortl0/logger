@@ -8,9 +8,9 @@
 
 #include "logger.h"
 
-#include "time_helper.h"
+#include <unistd.h>
 
-namespace logger
+namespace cortl::logger
 {
 
 bool logger::check_level(level l) const noexcept
@@ -43,21 +43,21 @@ void logger::log(level level, const std::string& message) const noexcept
 
 void logger::log(const std::string& message) const noexcept
 {
-    static constexpr int error{-1};
+    static constexpr int system_call_error{-1};
 
     for(int attempt = 0; attempt < 2; ++attempt)
-        if(::write(file_descriptor_, message.c_str(), message.size()) != error)
+        if(::write(file_descriptor_, message.c_str(), message.size()) != system_call_error)
             return;
 }
 
-void logger::set_file_descriptor(int file_descriptor) noexcept
+void logger::set_descriptor(int file_descriptor) noexcept
 {
-    this->file_descriptor_ = file_descriptor;
+    file_descriptor_ = file_descriptor;
 }
 
 void logger::set_level(level level) noexcept
 {
-    this->level_ = level;
+    level_ = level;
 }
 
-} // namespace logger
+} // namespace cortl::logger

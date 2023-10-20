@@ -6,23 +6,20 @@
  *   licensed by GPL v3.0
  */
 
-#ifndef TIME_HELPER
-#define TIME_HELPER
-
-#include "unistd.h"
+#ifndef CORTL_LOGGER_HELPERS_TIME
+#define CORTL_LOGGER_HELPERS_TIME
 
 #include <string>
 
-namespace logger
+namespace cortl::logger::helpers
 {
 
-class time_helper
+class time
 {
 public:
-    static std::string get_date_time() noexcept(true);
-    static std::string get_time() noexcept(true);
+    static std::string get_time();
 };
 
-} // namespace logger
+} // namespace cortl::logger::helpers
 
-#endif // TIME_HELPER
+#endif // CORTL_LOGGER_HELPERS_TIME
