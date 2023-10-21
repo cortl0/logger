@@ -15,7 +15,11 @@ namespace cortl::logger
 
 bool logger::check_level(level l) const noexcept
 {
+#ifdef CORTL_LOGGER_DISABLED
+    return false;
+#else
     return l != logger::logger::level::none && l <= level_;
+#endif
 }
 
 int logger::get_file_descriptor() const noexcept
@@ -35,19 +39,27 @@ const std::string_view& logger::get_level_name(logger::logger::level level) noex
 
 void logger::log(level level, const std::string& message) const noexcept
 {
+#ifdef CORTL_LOGGER_DISABLED
+    return;
+#else
     if (!check_level(level))
         return;
 
     log(message);
+#endif
 }
 
 void logger::log(const std::string& message) const noexcept
 {
+#ifdef CORTL_LOGGER_DISABLED
+    return;
+#else
     static constexpr int system_call_error{-1};
 
     for(int attempt = 0; attempt < 2; ++attempt)
         if(::write(file_descriptor_, message.c_str(), message.size()) != system_call_error)
             return;
+#endif
 }
 
 void logger::set_descriptor(int file_descriptor) noexcept

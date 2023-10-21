@@ -1,6 +1,6 @@
 # logger
 The lite C++ logger  
-6 microseconds to build and write a log-message  
+5 microseconds to build and write a log-message  
 Write to file by file_descriptor such as cout, cerr and all other files
 
 ## Usage
@@ -17,7 +17,7 @@ int main()
     logger_.log("message_0: message will be output allways\n");
     logger_.log(cortl::logger::logger::level::none , "message_1: message will never be output\n");
     logger_.log(cortl::logger::logger::level::fatal , "message_2: message will be output in fatal mode and higher\n");
-    logger_.log(cortl::logger::logger::level::info , "message_3: message will be output in info mode and higher\n");
+    log_warning("message_3: user-friendly message will be output in warning mode and higher");
     log_verbose("message_4: user-friendly message will be output in verbose mode and higher");
     log_trace("message_5: user-friendly message will be output in trace mode but will not be output now according to the defined logging level (debug)");
 
@@ -35,13 +35,13 @@ int main()
 ```
 message_0: message will be output allways
 message_2: message will be output in fatal mode and higher
-message_3: message will be output in info mode and higher
-2023.10.20 22:45:10.062209302 | verbose  | message_4: user-friendly message will be output in verbose mode and higher
-2023.10.20 22:45:10.062376475 | info     | speed test
-2023.10.20 22:45:10.062398010 | info     | speed test
-2023.10.20 22:45:10.062418407 | info     | speed test
-2023.10.20 22:45:10.062434011 | info     | speed test
-2023.10.20 22:45:10.062450826 | info     | speed test
+2023.10.22 00:13:57.514355484 | warning  | message_3: user-friendly message will be output in warning mode and higher
+2023.10.22 00:13:57.514432562 | verbose  | message_4: user-friendly message will be output in verbose mode and higher
+2023.10.22 00:13:57.514440429 | info     | speed test
+2023.10.22 00:13:57.514446444 | info     | speed test
+2023.10.22 00:13:57.514451863 | info     | speed test
+2023.10.22 00:13:57.514457032 | info     | speed test
+2023.10.22 00:13:57.514462277 | info     | speed test
 ```
 
 ## Build
