@@ -60,7 +60,6 @@ Thumbs.db
 *.opensdf
 *.vcxproj
 *vcxproj.*
-
 # MinGW generated files
 *.Debug
 *.Release
@@ -73,3 +72,4 @@ Thumbs.db
 *.dll
 *.exe
 
+Testing/*

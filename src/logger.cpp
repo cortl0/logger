@@ -55,10 +55,17 @@ void logger::log(const std::string& message) const noexcept
     return;
 #else
     static constexpr int system_call_error{-1};
+    static constexpr int ivalid_file_descriptor{-1};
 
-    for(int attempt = 0; attempt < 2; ++attempt)
+    do
+    {
+        if(ivalid_file_descriptor == file_descriptor_)
+            return;
+
         if(::write(file_descriptor_, message.c_str(), message.size()) != system_call_error)
             return;
+    }
+    while(true);
 #endif
 }
 
