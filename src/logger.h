@@ -39,24 +39,11 @@ public:
     static const std::string_view& get_level_name(level) noexcept;
     void log(level, const std::string& message) const noexcept;
     void log(const std::string& message) const noexcept;
+    static void log(const std::atomic<int>& file_descriptor_, const std::string& message) noexcept;
     void set_descriptor(int file_descriptor) noexcept;
     void set_level(level) noexcept;
 
 private:
-    static constexpr std::array<std::string_view, 10> level_names
-    {
-        "none    ",
-        "fatal   ",
-        "critical",
-        "syserror",
-        "error   ",
-        "warning ",
-        "info    ",
-        "verbose ",
-        "debug   ",
-        "trace   "
-    };
-
     std::atomic<level> level_{level::info};
     std::atomic<int> file_descriptor_{fileno(stdout)};
 };

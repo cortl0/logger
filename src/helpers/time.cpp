@@ -14,28 +14,39 @@
 namespace cortl::logger::helpers
 {
 
-std::string time::get_time()
+#define CORTL_LOGGER_HELPERS_TIME_COMMON_LINES \
+    char time_buffer[time_buffer_length]; \
+    auto time = std::chrono::high_resolution_clock::now().time_since_epoch(); \
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(time).count(); \
+    auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(time).count() % 1000000000;
+
+std::string time::get_gmt_time()
 {
-    constexpr size_t time_buffer_length{30};
+    static constexpr size_t time_buffer_length{30};
     size_t offset{0};
+    CORTL_LOGGER_HELPERS_TIME_COMMON_LINES
+    offset += std::strftime(time_buffer, time_buffer_length, "%Y.%m.%d %H:%M:%S", std::gmtime(&seconds));
+    snprintf(&time_buffer[offset], 11, ".%.9u\0", nanoseconds);
 
-    char time_buffer[time_buffer_length];
-    auto tp = std::chrono::high_resolution_clock::now().time_since_epoch();
-    std::time_t time = std::chrono::duration_cast<std::chrono::seconds>(tp).count();
+    return time_buffer;
+}
 
-#ifdef CORTL_LOGGER_USE_UNIX_TIME
-    std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(tp);
-    offset += snprintf(time_buffer, 11, "%s", std::to_string(seconds.count()).c_str());
-#else
-#ifdef CORTL_LOGGER_USE_GMT
-    offset += std::strftime(time_buffer, time_buffer_length, "%Y.%m.%d %H:%M:%S", std::gmtime(&time));
-#else
-    offset += std::strftime(time_buffer, time_buffer_length, "%Y.%m.%d %H:%M:%S", std::localtime(&time));
-#endif
-#endif
+std::string time::get_local_time()
+{
+    static constexpr size_t time_buffer_length{30};
+    size_t offset{0};
+    CORTL_LOGGER_HELPERS_TIME_COMMON_LINES
+    offset += std::strftime(time_buffer, time_buffer_length, "%Y.%m.%d %H:%M:%S", std::localtime(&seconds));
+    snprintf(&time_buffer[offset], 11, ".%.9u\0", nanoseconds);
 
-    std::chrono::nanoseconds nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(tp);
-    snprintf(&time_buffer[offset], 11, ".%.9u\0", nanoseconds.count() % 1000000000);
+    return time_buffer;
+}
+
+std::string time::get_unix_time()
+{
+    static constexpr size_t time_buffer_length{21};
+    CORTL_LOGGER_HELPERS_TIME_COMMON_LINES
+    snprintf(time_buffer, time_buffer_length, "%.10u.%.9u\0", seconds, nanoseconds);
 
     return time_buffer;
 }

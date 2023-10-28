@@ -17,7 +17,9 @@ namespace cortl::logger::helpers
 class time
 {
 public:
-    static std::string get_time();
+    static std::string get_gmt_time();
+    static std::string get_local_time();
+    static std::string get_unix_time();
 };
 
 } // namespace cortl::logger::helpers
