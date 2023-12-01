@@ -15,7 +15,7 @@ namespace cortl::logger
 
 bool logger::check_level(level l) const noexcept
 {
-    return l != logger::logger::level::none && l <= level_;
+    return l <= level_;
 }
 
 int logger::get_file_descriptor() const noexcept
@@ -32,12 +32,12 @@ const std::string_view& logger::get_level_name(logger::logger::level level) noex
 {
     static constexpr std::array<std::string_view, 10> level_names
     {
-        "none    ",
-        "fatal   ",
+        "none",
+        "   fatal",
         "critical",
         "syserror",
-        "error   ",
-        "warning ",
+        "   error",
+        " warning",
         "info    ",
         "verbose ",
         "debug   ",
@@ -47,20 +47,20 @@ const std::string_view& logger::get_level_name(logger::logger::level level) noex
     return level_names[static_cast<std::underlying_type_t<logger::level>>(level)];
 }
 
-void logger::log(level level, const std::string& message) const noexcept
+void logger::log(level level, const char* message, size_t count) const noexcept
 {
     if (!check_level(level))
         return;
 
-    log(message);
+    log(message, count);
 }
 
-void logger::log(const std::string& message) const noexcept
+void logger::log(const char* message, size_t count) const noexcept
 {
-    log(file_descriptor_, message);
+    log(file_descriptor_, message, count);
 }
 
-void logger::log(const std::atomic<int>& file_descriptor_, const std::string& message) noexcept
+void logger::log(const std::atomic<int>& file_descriptor_, const char* message, size_t count) noexcept
 {
     static constexpr int system_call_error{-1};
     static constexpr int ivalid_file_descriptor{-1};
@@ -70,7 +70,7 @@ void logger::log(const std::atomic<int>& file_descriptor_, const std::string& me
         if(ivalid_file_descriptor == file_descriptor_)
             return;
 
-        if(::write(file_descriptor_, message.c_str(), message.size()) != system_call_error)
+        if(::write(file_descriptor_, message, count) != system_call_error)
             return;
     }
     while(true);

@@ -37,9 +37,9 @@ public:
     int get_file_descriptor() const noexcept;
     level get_level() const noexcept;
     static const std::string_view& get_level_name(level) noexcept;
-    void log(level, const std::string& message) const noexcept;
-    void log(const std::string& message) const noexcept;
-    static void log(const std::atomic<int>& file_descriptor_, const std::string& message) noexcept;
+    void log(level, const char* message, size_t count) const noexcept;
+    void log(const char* message, size_t count) const noexcept;
+    static void log(const std::atomic<int>& file_descriptor_, const char* message, size_t count) noexcept;
     void set_descriptor(int file_descriptor) noexcept;
     void set_level(level) noexcept;
 

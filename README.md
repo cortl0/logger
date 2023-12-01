@@ -1,14 +1,14 @@
 # logger
 The lite thread safe C++ logger  
-1250 nanoseconds to build and write a log message  
+1100 nanoseconds to build and write a log message  
 Write to file by file_descriptor such as cout, cerr, regular and all other files  
 You can use helpers or message format according to your own preferences  
   
 ## Test
-1250 nanoseconds in UNIX time mode
+1100 nanoseconds in UNIX time mode
 ```
-1698478158.211970451 | info     | speed test
-1698478158.211971597 | info     | speed test
+1701366792.820565802 | info     | speed test
+1701366792.820566839 | info     | speed test
 ```
 
 1600 nanoseconds in human readable GMT mode
@@ -33,23 +33,22 @@ Memory: DDR3 Speed: 667 MT/s (dual mode)
 #include "helpers/file.h"
 #include "helpers/format.h"
 
-#define logger_instance logger_
-inline cortl::logger::logger logger_;
 inline cortl::logger::helpers::file cortl_file_helper;
+inline cortl::logger::logger cortl_logger_instance;
 
-int main()
+int main(int argc, char **argv)
 {
     using namespace cortl::logger;
-    logger_.set_descriptor(helpers::file::open("/dev/shm/log.txt"));
-    logger_.set_level(logger::level::debug);
-    logger_.log("message_0: message will be output allways\n");
-    logger_.log(logger::level::none, "message_1: message will never be output\n");
-    logger_.log(logger::level::fatal, "message_2: message will be output in fatal mode and higher\n");
-    log_warning("message_3: user-friendly message will be output in warning mode and higher");
-    log_verbose("message_4: user-friendly message will be output in verbose mode and higher");
-    log_trace("message_5: user-friendly message will be output in trace mode but will not be output now according to the defined logging level (debug)");
 
-    for(int i = 0; i <1000000; ++i)
+    cortl_file_helper.set_descriptor(helpers::file::open("/dev/shm/log.txt"));
+    cortl_logger_instance.set_descriptor(cortl_file_helper.get_descriptor());
+    cortl_logger_instance.set_level(logger::level::debug);
+    log_syserror("syserror test message");
+    log_info(CORTL_LOGGER_PLACE_STRING.c_str());
+    log_debug("message will be output in debug mode and higher");
+    log_trace("message will be output in trace mode but will not be output now according to the defined logging level (debug)");
+
+    for(int i = 0; i < 1000000; ++i)
         log_info("speed test");
 
     return 0;
@@ -58,20 +57,18 @@ int main()
 
 ## Output
 ```
-message_0: message will be output allways
-message_2: message will be output in fatal mode and higher
-2023.10.28 07:37:51.322169352 | warning  | message_3: user-friendly message will be output in warning mode and higher
-2023.10.28 07:37:51.322325141 | verbose  | message_4: user-friendly message will be output in verbose mode and higher
+1701366791.660527647 | syserror | syserror test message | errno [0], strerror [Success]
+1701366791.660629898 | info     | int main(int, char**):./logger/src/logger_test.cpp:24
+1701366791.660657787 | debug    | message will be output in debug mode and higher
 ...
-2023.10.28 07:37:52.895760450 | info     | speed test
-2023.10.28 07:37:52.895761896 | info     | speed test
-2023.10.28 07:37:52.895763343 | info     | speed test
-2023.10.28 07:37:52.895764799 | info     | speed test
-2023.10.28 07:37:52.895766247 | info     | speed test
+1701366792.820564773 | info     | speed test
+1701366792.820565802 | info     | speed test
+1701366792.820566839 | info     | speed test
+1701366792.820567891 | info     | speed test
 ...
 
 $ ctest
-Total Test time (real) =   1.57 sec
+Total Test time (real) =   1.17 sec
 ```
 
 ## Build

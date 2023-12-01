@@ -14,7 +14,6 @@ project(cortl_logger_helpers)
 
 add_library(${PROJECT_NAME}
     file.cpp
-    time.cpp
     )
 
 target_link_libraries(${PROJECT_NAME}
