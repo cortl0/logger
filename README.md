@@ -5,7 +5,7 @@ Write to file by file_descriptor such as cout, cerr, regular and all other files
 You can use helpers or message format according to your own preferences  
   
 ## Test
-1100 nanoseconds in UNIX time mode
+1200 nanoseconds in UNIX time mode
 ```
 1701366792.820565802 | info     | speed test
 1701366792.820566839 | info     | speed test
@@ -43,8 +43,8 @@ int main(int argc, char **argv)
     cortl_file_helper.set_descriptor(helpers::file::open("/dev/shm/log.txt"));
     cortl_logger_instance.set_descriptor(cortl_file_helper.get_descriptor());
     cortl_logger_instance.set_level(logger::level::debug);
-    log_syserror("syserror test message");
-    log_info(CORTL_LOGGER_PLACE_STRING.c_str());
+    log_syserror(CORTL_LOGGER_FORMAT_ERRNO_STRING.c_str());
+    log_info(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str());
     log_debug("message will be output in debug mode and higher");
     log_trace("message will be output in trace mode but will not be output now according to the defined logging level (debug)");
 
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 
 ## Output
 ```
-1701366791.660527647 | syserror | syserror test message | errno [0], strerror [Success]
+1701366791.660527647 | syserror | errno [0], strerror [Success]
 1701366791.660629898 | info     | int main(int, char**):./logger/src/logger_test.cpp:24
 1701366791.660657787 | debug    | message will be output in debug mode and higher
 ...
