@@ -21,15 +21,15 @@
 
 #ifdef CORTL_LOGGER_DISABLED
 
-    #define log_fatal(message)
-    #define log_critical(message)
-    #define log_syserror(message)
-    #define log_error(message)
-    #define log_warning(message)
-    #define log_info(message)
-    #define log_verbose(message)
-    #define log_debug(message)
-    #define log_trace(message)
+    #define log_fatal(args...)
+    #define log_critical(args...)
+    #define log_syserror(args...)
+    #define log_error(args...)
+    #define log_warning(args...)
+    #define log_info(args...)
+    #define log_verbose(args...)
+    #define log_debug(args...)
+    #define log_trace(args...)
 
 #else
 
@@ -54,14 +54,14 @@
                 CORTL_LOGGER_HUMAN_READABLE_TIME_TYPE); \
             CORTL_LOGGER_FORMAT_GOOD_RESULT_LENGTH
 
-        #define CORTL_LOGGER_FORMAT_OUTPUT_WITH_TIME ".%.9u | %s | %s",
+        #define CORTL_LOGGER_FORMAT_OUTPUT_WITH_TIME ".%.9ld | %s | ",
     #else
         #define CORTL_LOGGER_FORMAT_APPEND_TIME
 
-        #define CORTL_LOGGER_FORMAT_OUTPUT_WITH_TIME "\n%.10u.%.9u | %s | %s", seconds,
+        #define CORTL_LOGGER_FORMAT_OUTPUT_WITH_TIME "\n%.10ld.%.9ld | %s | ", seconds,
     #endif
 
-    #define CORTL_LOGGER_FORMAT_ORDINARY(level, message) \
+    #define CORTL_LOGGER_FORMAT_ORDINARY(level, args...) \
         if(cortl_logger_instance.check_level(level)) \
         { \
             char buffer[CORTL_LOGGER_FORMAT_BUFFER_LENGTH]; \
@@ -73,20 +73,22 @@
             result_length = snprintf(buffer + offset, \
                 CORTL_LOGGER_FORMAT_BUFFER_LENGTH - offset, \
                 CORTL_LOGGER_FORMAT_OUTPUT_WITH_TIME \
-                nanoseconds, cortl::logger::logger::get_level_name(level).data(), message); \
+                nanoseconds, cortl::logger::logger::get_level_name(level).data()); \
+            CORTL_LOGGER_FORMAT_GOOD_RESULT_LENGTH \
+            result_length = snprintf(buffer + offset, CORTL_LOGGER_FORMAT_BUFFER_LENGTH - offset, args); \
             CORTL_LOGGER_FORMAT_GOOD_RESULT_LENGTH \
             cortl_logger_instance.log(buffer, offset); \
         }
 
-    #define log_fatal(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::fatal, message)
-    #define log_critical(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::critical, message)
-    #define log_syserror(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::syserror, message)
-    #define log_error(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::error, message)
-    #define log_warning(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::warning, message)
-    #define log_info(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::info, message)
-    #define log_verbose(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::verbose, message)
-    #define log_debug(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::debug, message)
-    #define log_trace(message) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::trace, message)
+    #define log_fatal(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::fatal, args)
+    #define log_critical(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::critical, args)
+    #define log_syserror(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::syserror, args)
+    #define log_error(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::error, args)
+    #define log_warning(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::warning, args)
+    #define log_info(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::info, args)
+    #define log_verbose(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::verbose, args)
+    #define log_debug(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::debug, args)
+    #define log_trace(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::trace, args)
 
 #endif
 

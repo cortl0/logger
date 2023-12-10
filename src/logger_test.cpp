@@ -24,9 +24,10 @@ int main(int argc, char **argv)
     log_info(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str());
     log_debug("message will be output in debug mode and higher");
     log_trace("message will be output in trace mode but will not be output now according to the defined logging level (debug)");
+    log_info("test %s [%d]", "snprintf", 12345);
 
     for(int i = 0; i < 1000000; ++i)
-        log_info("speed test");
+        log_info("speed %s", "test");
 
     return 0;
 }

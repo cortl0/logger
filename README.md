@@ -1,6 +1,6 @@
 # logger
 The lite thread safe C++ logger  
-1100 nanoseconds to build and write a log message  
+1200 nanoseconds to build and write a log message  
 Write to file by file_descriptor such as cout, cerr, regular and all other files  
 You can use helpers or message format according to your own preferences  
   
@@ -47,9 +47,10 @@ int main(int argc, char **argv)
     log_info(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str());
     log_debug("message will be output in debug mode and higher");
     log_trace("message will be output in trace mode but will not be output now according to the defined logging level (debug)");
+    log_info("test %s [%d]", "snprintf", 12345);
 
     for(int i = 0; i < 1000000; ++i)
-        log_info("speed test");
+        log_info("speed %s", "test");
 
     return 0;
 }
@@ -57,18 +58,19 @@ int main(int argc, char **argv)
 
 ## Output
 ```
-1701366791.660527647 | syserror | errno [0], strerror [Success]
-1701366791.660629898 | info     | int main(int, char**):./logger/src/logger_test.cpp:24
-1701366791.660657787 | debug    | message will be output in debug mode and higher
+1701624513.671503997 | syserror | errno [0], strerror [Success]
+1701624513.671603251 | info     | int main(int, char**):./logger/src/logger_test.cpp:24
+1701624513.671627442 | debug    | message will be output in debug mode and higher
+1701624513.671632924 | info     | test snprintf [12345]
 ...
-1701366792.820564773 | info     | speed test
-1701366792.820565802 | info     | speed test
-1701366792.820566839 | info     | speed test
-1701366792.820567891 | info     | speed test
+1701624514.782558229 | info     | speed test
+1701624514.782559287 | info     | speed test
+1701624514.782560338 | info     | speed test
+1701624514.782561393 | info     | speed test
 ...
 
 $ ctest
-Total Test time (real) =   1.17 sec
+Total Test time (real) =   1.15 sec
 ```
 
 ## Build

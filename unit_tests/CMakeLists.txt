@@ -14,9 +14,12 @@ enable_testing()
 
 project(logger_test)
 
+add_compile_options(-Wformat)
+set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
+
 # add_compile_definitions(CORTL_LOGGER_DISABLED)
-# add_compile_definitions(CORTL_LOGGER_USE_GMT)
-# add_compile_definitions(CORTL_LOGGER_USE_UNIX_TIME)
+# add_compile_definitions(CORTL_LOGGER_USE_HUMAN_READABLE_TIME)
+# add_compile_definitions(CORTL_LOGGER_USE_LOCAL_TIME)
 
 add_executable(${PROJECT_NAME}
     ../src/logger_test.cpp
