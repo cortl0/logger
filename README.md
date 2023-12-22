@@ -29,22 +29,15 @@ Memory: DDR3 Speed: 667 MT/s (dual mode)
 
 ## Usage
 ```
-#include "logger.h"
-#include "helpers/file.h"
-#include "helpers/format.h"
-
-inline cortl::logger::helpers::file cortl_file_helper;
-inline cortl::logger::logger cortl_logger_instance;
+#include "helpers/log.h"
 
 int main(int argc, char **argv)
 {
-    using namespace cortl::logger;
-
-    cortl_file_helper.set_descriptor(helpers::file::open("/dev/shm/log.txt"));
+    cortl_file_helper.set_descriptor(cortl::logger::helpers::file::open("/dev/shm/log.txt"));
     cortl_logger_instance.set_descriptor(cortl_file_helper.get_descriptor());
-    cortl_logger_instance.set_level(logger::level::debug);
+    cortl_logger_instance.set_level(cortl::logger::logger::level::debug);
+    log_place;
     log_syserror(CORTL_LOGGER_FORMAT_ERRNO_STRING.c_str());
-    log_info(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str());
     log_debug("message will be output in debug mode and higher");
     log_trace("message will be output in trace mode but will not be output now according to the defined logging level (debug)");
     log_info("test %s [%d]", "snprintf", 12345);
@@ -58,19 +51,16 @@ int main(int argc, char **argv)
 
 ## Output
 ```
-1701624513.671503997 | syserror | errno [0], strerror [Success]
-1701624513.671603251 | info     | int main(int, char**):./logger/src/logger_test.cpp:24
-1701624513.671627442 | debug    | message will be output in debug mode and higher
-1701624513.671632924 | info     | test snprintf [12345]
+1703251689.715356524 | debug    | int main(int, char**):.../logger/src/logger_test.cpp:16
+1703251689.715401824 | syserror | errno [0], strerror [Success]
+1703251689.715413233 | debug    | message will be output in debug mode and higher
+1703251689.715415142 | info     | test snprintf [12345]
 ...
-1701624514.782558229 | info     | speed test
-1701624514.782559287 | info     | speed test
-1701624514.782560338 | info     | speed test
-1701624514.782561393 | info     | speed test
+1703251690.840504864 | info     | speed test
+1703251690.840505993 | info     | speed test
+1703251690.840507133 | info     | speed test
+1703251690.840508269 | info     | speed test
 ...
-
-$ ctest
-Total Test time (real) =   1.15 sec
 ```
 
 ## Build
