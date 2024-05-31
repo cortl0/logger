@@ -62,6 +62,7 @@
     #endif
 
     #define CORTL_LOGGER_FORMAT_ORDINARY(level, args...) \
+    { \
         if(cortl_logger_instance.check_level(level)) \
         { \
             char buffer[CORTL_LOGGER_FORMAT_BUFFER_LENGTH]; \
@@ -78,7 +79,8 @@
             result_length = snprintf(buffer + offset, CORTL_LOGGER_FORMAT_BUFFER_LENGTH - offset, args); \
             CORTL_LOGGER_FORMAT_GOOD_RESULT_LENGTH \
             cortl_logger_instance.log(buffer, offset); \
-        }
+        } \
+    }
 
     #define log_fatal(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::fatal, args)
     #define log_critical(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::critical, args)
@@ -91,5 +93,7 @@
     #define log_trace(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::trace, args)
 
 #endif
+
+#define log_place log_debug(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str())
 
 #endif // CORTL_LOGGER_HELPERS_FORMAT
