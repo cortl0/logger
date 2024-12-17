@@ -84,7 +84,7 @@
 
     #define log_fatal(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::fatal, args)
     #define log_critical(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::critical, args)
-    #define log_syserror(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::syserror, args)
+    #define log_syserror(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::syserror, args, 0)
     #define log_error(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::error, args)
     #define log_warning(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::warning, args)
     #define log_info(args...) CORTL_LOGGER_FORMAT_ORDINARY(cortl::logger::logger::level::info, args)
@@ -94,6 +94,6 @@
 
 #endif
 
-#define log_place log_debug(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str())
+#define log_place log_debug(CORTL_LOGGER_FORMAT_PLACE_STRING.c_str(), 0)
 
 #endif // CORTL_LOGGER_HELPERS_FORMAT
